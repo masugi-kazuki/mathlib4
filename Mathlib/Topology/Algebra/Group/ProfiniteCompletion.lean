@@ -110,12 +110,21 @@ lemma density_StructureMorphism_image : Dense (Set.range (StructureMorphism G) )
 lemma kerIsTrivialIfProfiniteGroup -- ⨅  (U : FiniteOpenNormalSubgroup G) is trivial
   sorry
 
+
 lemma Isom_Structuremorphism_when_profinite
   [CompactSpace G] [TotallyDisconnectedSpace G] [T2Space G] :
   Function.Bijective (StructureMorphism G) := by
   rw [Function.Bijective]
   constructor
-  · --injective ker_StructureMorphism and ⨅  (U : FiniteOpenNormalSubgroup G) = 1
-    sorry
+  · -- injective
+    apply (MonoidHom.ker_eq_bot_iff (StructureMorphism G).1).mp
+    rw [ker_StructureMorphism G] -- Ker= ⨅  (U : FiniteOpenNormalSubgroup G)
+    apply kerIsTrivialIfProfiniteGroup -- ⨅  (U : FiniteOpenNormalSubgroup G) is trivial
   · -- surjectivity
-    sorry
+    rw [← Set.range_eq_univ]
+    have : IsClosed (Set.range (StructureMorphism G)) := by
+      apply IsCompact.isClosed
+      exact isCompact_range (StructureMorphism G).continuous_toFun
+    rw [← IsClosed.closure_eq this]
+    refine denseRange_iff_closure_range.mp ?_
+    apply density_StructureMorphism_image
