@@ -98,7 +98,11 @@ lemma ker_StructureMorphism : MonoidHom.ker (StructureMorphism G).1 = ⨅  (U : 
     replace h : QuotientGroup.mk' _ g = 1 := h
     rwa [← MonoidHom.mem_ker,QuotientGroup.ker_mk'] at h
   · intro h
-    sorry
+    ext U
+    specialize h U
+    show QuotientGroup.mk' _ g = 1
+    rw [← MonoidHom.mem_ker,QuotientGroup.ker_mk']
+    apply h
 
 lemma density_StructureMorphism_image : Dense (Set.range (StructureMorphism G) ) := by
   sorry
