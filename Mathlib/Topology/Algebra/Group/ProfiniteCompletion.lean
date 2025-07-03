@@ -10,7 +10,6 @@ lemma quot_by_ON_discrete (U : OpenNormalSubgroup G)
 structure FiniteOpenNormalSubgroup extends OpenNormalSubgroup G where
     finiteindex : toOpenNormalSubgroup.FiniteIndex
 
-
 instance (U  : FiniteOpenNormalSubgroup G) : CompactSpace (G ⧸ U.1.1.1) := sorry
 
 instance : Preorder (FiniteOpenNormalSubgroup G) where
@@ -104,9 +103,6 @@ lemma ker_StructureMorphism : MonoidHom.ker (StructureMorphism G).1 = ⨅  (U : 
     rw [← MonoidHom.mem_ker,QuotientGroup.ker_mk']
     apply h
 
-lemma CharcterizationOpenProfiniteCompletion (U : Set (ProfiniteCompletion G)) : (IsOpen U) ↔ (∀ (x : U), ∃ (V : FiniteOpenNormalSubgroup G), ∀ (y : ProfiniteCompletion G), (x.1.1 V = y.1 V) → (y ∈ U)) := by
-  sorry
-
 lemma density_StructureMorphism_image : Dense (Set.range (StructureMorphism G) ) := by
   unfold Dense
   intro x
@@ -141,10 +137,32 @@ lemma density_StructureMorphism_image : Dense (Set.range (StructureMorphism G) )
 
   sorry
 
-#check IsClosed
+lemma OpenSubgrupInProfiniteIsOfFiniteIndex [CompactSpace G] [TotallyDisconnectedSpace G] [T2Space G] : ∀ (U : OpenNormalSubgroup G), U.FiniteIndex := sorry
 
-lemma kerIsTrivialIfProfiniteGroup -- ⨅  (U : FiniteOpenNormalSubgroup G) is trivial
-  sorry
+
+lemma kerIsTrivialIfProfiniteGroup  [CompactSpace G] [TotallyDisconnectedSpace G] [T2Space G] :
+ ⨅ (U : FiniteOpenNormalSubgroup G) ,U.1.1.1 = ⊥ := by
+-- ⨅  (U : FiniteOpenNormalSubgroup G) is trivial
+  apply Subgroup.ext
+  intro g
+  rw [Subgroup.mem_iInf, Subgroup.mem_bot]
+  constructor
+  intro hg
+  by_contra hg_ne
+  rcases t2_separation (ne_comm.mp hg_ne) with ⟨V, W, hV_open, hW_open, h1V, hgW, hVW_disj⟩
+  obtain ⟨ U, hu ⟩ := ProfiniteGrp.exist_openNormalSubgroup_sub_open_nhds_of_one hV_open h1V 
+  by_cases h_gu : g ∈ U
+  · unfold Disjoint at hVW_disj
+    have hv := hu h_gu
+    have h_ : {g} ≤ V := by simp [hv]
+    have hg2 := hVW_disj h_
+    simp at hg2
+    contradiction
+  · apply h_gu
+    have : U.FiniteIndex := by
+      exact OpenSubgrupInProfiniteIsOfFiniteIndex G U
+    let U' : FiniteOpenNormalSubgroup G := ⟨ U , this ⟩ 
+    exact hg U'
 
 
 lemma Isom_Structuremorphism_when_profinite
@@ -164,3 +182,45 @@ lemma Isom_Structuremorphism_when_profinite
     rw [← IsClosed.closure_eq this]
     refine denseRange_iff_closure_range.mp ?_
     apply density_StructureMorphism_image
+
+
+
+def ProfiniteCompletion_map (H : Type) [Group H] [TopologicalSpace H] [IsTopologicalGroup H] (f : G →ₜ* H) :
+    (ProfiniteCompletion G) →ₜ* (ProfiniteCompletion H) where
+      toFun := by
+        intro g
+        refine ⟨ ?_,?_ ⟩
+        · intro U
+          dsimp
+          let V : FiniteOpenNormalSubgroup G := by
+            refine ⟨ ⟨ U.comap f f.2 , ?_⟩, ?_⟩
+            simp
+            exact Subgroup.normal_comap _
+            have : U.1.1.1.comap f = MonoidHom.ker ((QuotientGroup.mk' U.1.1.1).comp f.1) :=sorry
+            dsimp []
+            rw [this]
+            have : Finite (H⧸U.1.1.1) := by
+              rw [← Subgroup.finiteIndex_iff_finite_quotient]
+              exact U.2
+            apply Subgroup.finiteIndex_ker
+          sorry
+        · simp [Mem_ProfiniteCompletion_iff]
+      map_one' := by
+        rfl
+      map_mul' := by
+        intro g h
+        dsimp
+        ext U
+        simp
+      continuous_toFun := by
+        fun_prop
+
+
+
+lemma Univ_ProfiniteCompletion (H : Type) [Group H] [TopologicalSpace H] [IsTopologicalGroup H] (f : G →ₜ* H) :
+    ∃! (f' : (ProfiniteCompletion G) →ₜ* (ProfiniteCompletion H)),
+    f'.comp (StructureMorphism G) = (StructureMorphism H).comp f := by
+  refine ⟨?_, ?_, ?_⟩
+  ·sorry
+  ·sorry
+  ·sorry
