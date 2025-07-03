@@ -100,8 +100,44 @@ lemma ker_StructureMorphism : MonoidHom.ker (StructureMorphism G).1 = ⨅  (U : 
   · intro h
     sorry
 
-lemma density_StructureMorphism_image : Dense (Set.range (StructureMorphism G) ) := by
+lemma CharcterizationOpenProfiniteCompletion (U : Set (ProfiniteCompletion G)) : (IsOpen U) ↔ (∀ (x : U), ∃ (V : FiniteOpenNormalSubgroup G), ∀ (y : ProfiniteCompletion G), (x.1.1 V = y.1 V) → (y ∈ U)) := by
   sorry
+
+lemma density_StructureMorphism_image : Dense (Set.range (StructureMorphism G) ) := by
+  unfold Dense
+  intro x
+  unfold closure
+  unfold Set.sInter
+  simp only [Diag_obj_toProfinite_toTop_carrier, Diag_obj_group, Set.sInf_eq_sInter, Set.mem_sInter,
+    Set.mem_setOf_eq, and_imp]
+  intro F
+  intro IsClosed_F
+  intro IsEnoughLarge_F
+  have isOpen_compl : IsOpen (Fᶜ) := by
+    exact IsClosed.isOpen_compl
+
+  -- Use the characterization lemma on Fᶜ, then use classical logic to deduce the property for F
+  have h_char := CharcterizationOpenProfiniteCompletion G (Fᶜ)
+  rw [h_char] at isOpen_compl
+  -- Now isOpen_compl : ∀ (x : Fᶜ), ∃ (V : FiniteOpenNormalSubgroup G), ∀ (y : ProfiniteCompletion G), ↑↑x V = ↑y V → y ∈ Fᶜ
+  -- Use by_contra to prove x ∈ F
+  by_contra hx
+  -- So x ∈ Fᶜ
+  specialize isOpen_compl ⟨x, hx⟩
+  rcases isOpen_compl with ⟨V, hV⟩
+  -- Use density of the image to find y in the image of StructureMorphism G close to x
+  -- (details omitted, proof continues...)
+  simp at hV
+  obtain ⟨y, hy⟩ := QuotientGroup.mk_surjective (x.1 V)
+  specialize hV (fun W => QuotientGroup.mk' W.1.1.1 y)
+  simp [hy] at hV
+  apply hV
+  apply IsEnoughLarge_F
+  simp
+
+  sorry
+
+#check IsClosed
 
 lemma kerIsTrivialIfProfiniteGroup -- ⨅  (U : FiniteOpenNormalSubgroup G) is trivial
   sorry
