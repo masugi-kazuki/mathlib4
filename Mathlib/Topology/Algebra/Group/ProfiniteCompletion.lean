@@ -103,6 +103,12 @@ lemma ker_StructureMorphism : MonoidHom.ker (StructureMorphism G).1 = ⨅  (U : 
 lemma density_StructureMorphism_image : Dense (Set.range (StructureMorphism G) ) := by
   sorry
 
-lemma Isom_Structuremorphism_when_profinite [CompactSpace G] [TotallyDisconnectedSpace G] [T2Space G]: Function.Bijective (StructureMorphism G) := by
---if G is profinite, then the structuremorphism is isomorphism
-  sorry
+lemma Isom_Structuremorphism_when_profinite
+  [CompactSpace G] [TotallyDisconnectedSpace G] [T2Space G] :
+  Function.Bijective (StructureMorphism G) := by
+  rw [Function.Bijective]
+  constructor
+  · --injective ker_StructureMorphism and ⨅  (U : FiniteOpenNormalSubgroup G) = 1
+    sorry
+  · -- surjectivity
+    sorry
